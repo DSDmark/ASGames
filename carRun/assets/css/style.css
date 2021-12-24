@@ -3,6 +3,7 @@
  margin:0;
  padding:0;
  box-sizing:border-box;
+ text-transform: capitalize;
 }
 html{
   font-size:62.5%;
@@ -20,6 +21,7 @@ font-family: 'Bungee', cursive;
 }
 .startScreen{
   display:block;
+  position: absolute;
   text-align:center;
   font-size:1.5rem;
   padding:2rem 4rem;
@@ -73,8 +75,8 @@ font-family: 'Bungee', cursive;
  background-image: url(../images/PngItem_1939941.png);
  background-repeat: no-repeat;
  background-position: 200;
-  height:7rem;
-  min-width:12rem;
+  height:6rem;
+  min-width:10.5rem;
  background-size:100% 100%;
  top:80%;
  transform:rotateZ(90deg);
@@ -85,8 +87,8 @@ font-family: 'Bungee', cursive;
 .otherCars{
   position:absolute;
  background-image: url(../images/PngItem_5122348.png);
-  height:7rem;
-  min-width:14rem;
+  height:6.5rem;
+  min-width:12.5rem;
  background-size:100% 100%;
  transform:rotateZ(-90deg);
  z-index:1;

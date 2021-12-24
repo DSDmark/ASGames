@@ -5,7 +5,7 @@ const gameResert = document.querySelector('.gameResert');
 
 console.log({ gameArea, gamePlayer, gameResert });
 
-var gameActive = true; // PLAYING CONDITIONS
+var gameActive = true; // PLAYING CONDITION
 const winState = [
 	[ 0, 1, 2 ],
 	[ 3, 4, 5 ],
