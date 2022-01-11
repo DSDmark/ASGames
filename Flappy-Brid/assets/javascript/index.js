@@ -18,9 +18,16 @@ const player = {
   window.addEventListener(
     event,
     () => {
-      player.gameActive = false;
-      player.gamePlaying = true;
-      playingObject.flying();
+      if (player.gameActive) {
+        player.gameActive = false;
+        player.gamePlaying = true;
+        playingObject.flying();
+      }
+      if (!player.gamePlaying) {
+        console.log("yo");
+        pipe.pipe = [];
+        // playingObject.position.y = 50;
+      }
     },
     true
   );
@@ -45,10 +52,10 @@ const playingObject = {
     canvasTx.rotate(this.rotatation * RAD);
     canvasTx.drawImage(
       this.imgAnimation[this.frames].playObjectImg,
-      -(this.imgAnimation[this.frames].playObjectImg.width) / 2,
-      -(this.imgAnimation[this.frames].playObjectImg.height) / 2
-      );
-      canvasTx.restore();
+      -this.imgAnimation[this.frames].playObjectImg.width / 2,
+      -this.imgAnimation[this.frames].playObjectImg.height / 2
+    );
+    canvasTx.restore();
   },
   updateFrames: function () {
     if (player.gameActive) {
@@ -59,12 +66,22 @@ const playingObject = {
       this.position.y += this.speed;
       this.speed += this.gravity;
       this.objectRotation();
+      this.collisioned();
+    } else if (!player.gameActive && !player.gamePlaying) {
+      if (
+        this.position.y +
+          parseFloat(this.imgAnimation[0].playObjectImg.width / 2) <
+        ground.position.y
+      ) {
+        this.position.y += this.speed;
+        this.setrotation();
+        this.speed += this.gravity * 2;
+      }
     }
-    // console.log(this.speed)
-
     this.frames = this.frames % this.imgAnimation.length; // ? CONTROL BRID ANIMETION
   },
-  flying: function () {         // ? WHEN KEY PRESS THEN RUN
+  flying: function () {
+    // ? WHEN KEY PRESS THEN RUN
     if (this.position.y > 0) {
       this.speed = -this.thrust;
     }
@@ -74,6 +91,26 @@ const playingObject = {
       this.rotatation = Math.max(-25, (-25 * this.speed) / (-1 * this.thrust));
     } else if (this.speed > 0) {
       this.rotatation = Math.min(90, (90 * this.speed) / (this.thrust * 2));
+    }
+  },
+  collisioned: function () {
+    if (!pipe.pipe.length) return;
+    let x = pipe.pipe[0].x;
+    let y = pipe.pipe[0].y;
+    let bridPro = parseFloat(this.imgAnimation[0].playObjectImg.width) / 2;
+    let groudPro = parseFloat(canvas.height - ground.groundImg.height);
+    let pipeH = y + parseFloat(pipe.topPipe.pipeImg.height);
+    let pipeW = parseFloat(pipe.topPipe.pipeImg.width);
+    if (groudPro - bridPro <= this.position.y) {
+      player.gamePlaying = false;
+    }
+    if (this.position.x + bridPro >= x) {
+      if (this.position.x + bridPro < x + pipeW) {
+        if (this.position.y - bridPro <= pipeH) {
+          console.info("he");
+          player.gamePlaying = false;
+        }
+      }
     }
   },
 };
@@ -111,12 +148,13 @@ const ground = {
   },
 };
 
-// ─── DRAW THE PIPES TOP AND BOTTOM ──────────────────────────────────────────────
+// ─── DRAW THE PIPES ,TOP AND BOTTOM ──────────────────────────────────────────────
 const pipe = {
   topPipe: { pipeImg: new Image() },
   bottomPipe: { pipeImg: new Image() },
   pipe: [],
   pipeGap: 85,
+  move: true,
   drewPipe: function () {
     for (let i = 0; i < this.pipe.length; i++) {
       let p = this.pipe[i];
@@ -130,9 +168,9 @@ const pipe = {
   },
   pipeUpdate: function () {
     if (player.gameActive) {
-      if (screenFrame % 120 == 0) {
+      if (screenFrame % 135 == 0) {
         // ? AUTOPLAYING
-        let ren = -210 * Math.min(Math.random() + .9, 1.7);
+        let ren = -210 * Math.min(Math.random() + 0.9, 1.7);
         this.pipe.push({
           x: parseFloat(canvas.width),
           y: ren,
@@ -142,16 +180,18 @@ const pipe = {
       }
       this.pipe.forEach((pipe) => {
         pipe.x -= ground.dx;
-
       });
     } else if (player.gamePlaying) {
-      if (screenFrame % 120 == 0) {
-        // ? AUTOPLAYING
+      if (screenFrame % 100 == 0) {
         let ren = -210 * Math.min(Math.random() + 0.9, 1.7);
         this.pipe.push({
           x: parseFloat(canvas.width),
           y: ren,
         });
+      }
+      if (this.move) {
+        UI.score[0].current++;
+        this.move = false;
       }
       this.pipe.forEach((pipe) => {
         pipe.x -= ground.dx;
@@ -159,19 +199,21 @@ const pipe = {
     }
     if (this.pipe.length && this.pipe[0].x < -this.topPipe.pipeImg.width) {
       this.pipe.shift();
+      this.move = true;
     }
   },
 };
 
 // ─── START AND END UI DEGIN ─────────────────────────────────────────────────────
 const UI = {
-  frames:0,
+  frames: 0,
   game: [{ start: new Image() }, { over: new Image() }],
   tap: [{ tapImg: new Image() }, { tapImg: new Image() }],
+  score: [{ current: 0, best: 0 }],
   drewUI: function () {
     if (player.gameActive) {
-      canvasTx.fillStyle = "rgb(126 255 90 / 20%)";
-      canvasTx.fillRect(0,0,canvas.width,canvas.height);
+      canvasTx.fillStyle = "rgb(126 255 90 / 30%)";
+      canvasTx.fillRect(0, 0, canvas.width, canvas.height);
       canvasTx.drawImage(
         this.game[0].start,
         (canvas.width - this.game[0].start.width) / 2,
@@ -183,9 +225,9 @@ const UI = {
         (canvas.height - this.tap[this.frames].tapImg.height) / 1.7
       );
     }
-    if ((!player.gamePlaying) && (!player.gameActive)) {
-       canvasTx.fillStyle = "rgb(60 100 20 / 20%)";
-      canvasTx.fillRect(0,0,canvas.width,canvas.height);
+    if (!player.gamePlaying && !player.gameActive) {
+      canvasTx.fillStyle = "rgb(60 100 20 / 20%)";
+      canvasTx.fillRect(0, 0, canvas.width, canvas.height);
       canvasTx.drawImage(
         this.game[1].over,
         (canvas.width - this.game[1].over.width) / 2,
@@ -197,11 +239,48 @@ const UI = {
         (canvas.height - this.tap[this.frames].tapImg.height) / 1.7
       );
     }
+    this.drewScore();
+  },
+  drewScore: function () {
+    canvasTx.fillStyle = "#2d8b26";
+    canvasTx.font = "20px monospace";
+    if (player.gamePlaying) {
+      canvasTx.fillText(
+        `Score:${this.score[0].current}`,
+        canvas.width / 20,
+        canvas.height - 60
+      );
+      canvasTx.strokeText(
+        `Score:${this.score[0].current}`,
+        canvas.width / 20,
+        canvas.height - 60
+      );
+    } else if (player.gameActive) {
+      canvasTx.fillText(
+        `Best:${localStorage.getItem("best")}`,
+        canvas.height / 20,
+        canvas.height - 60
+      );
+      canvasTx.strokeText(
+        `Best:${localStorage.getItem("best")}`,
+        canvas.height / 20,
+        canvas.height - 60
+      );
+    }
   },
   updateUI: function () {
+    if (player.gamePlaying) {
+      // ? SETING SCORE
+      this.score[0].best = Math.max(
+        this.score[0].current,
+        localStorage.getItem("best")
+      );
+
+      localStorage.setItem("best", this.score[0].best);
+    }
     this.frames += screenFrame % 20 == 0 ? 1 : 0;
     this.frames = this.frames % this.tap.length;
-  }
+  },
 };
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -215,13 +294,12 @@ const drewElements = () => {
   canvas.height = 450;
   canvas.width = 250;
   canvasTx.fillStyle = "#47f0a9";
-  canvasTx.strokeStyle = "red";
-  canvasTx.lineWidth = "2";
   canvasTx.fillRect(0, 0, canvas.width, canvas.height);
   background.drewBackground();
   pipe.drewPipe();
   ground.drewGround();
   playingObject.drewPlayObject();
+  UI.drewScore();
   UI.drewUI();
 };
 
@@ -256,3 +334,5 @@ UI.game[1].over.src = "assets/images/start&over_game_img/gameOver.png";
 UI.tap[0].tapImg.src = "assets/images/start&over_game_img/1_tap.png";
 UI.tap[1].tapImg.src = "assets/images/start&over_game_img/2_tap.png";
 // ────────────────────────────────────────────────────────────────────────────────
+// kab-se kabtak
+// paper are online or ofline
