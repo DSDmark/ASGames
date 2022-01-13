@@ -26,7 +26,7 @@ const player = {
       if (!player.gamePlaying) {
         console.log("yo");
         pipe.pipe = [];
-        // playingObject.position.y = 50;
+        playingObject.position.y = 50;
       }
     },
     true
@@ -68,6 +68,8 @@ const playingObject = {
       this.objectRotation();
       this.collisioned();
     } else if (!player.gameActive && !player.gamePlaying) {
+      this.frames = 1;
+      this.objectRotation();
       if (
         this.position.y +
           parseFloat(this.imgAnimation[0].playObjectImg.width / 2) <
@@ -109,6 +111,7 @@ const playingObject = {
         if (this.position.y - bridPro <= pipeH) {
           console.info("he");
           player.gamePlaying = false;
+          player.gamePlaying = true;
         }
       }
     }
