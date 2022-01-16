@@ -21,13 +21,8 @@ const player = {
       if (player.gameActive) {
         player.gameActive = false;
         player.gamePlaying = true;
-        playingObject.flying();
       }
-      if (!player.gamePlaying) {
-        console.log("yo");
-        pipe.pipe = [];
-        playingObject.position.y = 50;
-      }
+      playingObject.flying();
     },
     true
   );
@@ -106,12 +101,13 @@ const playingObject = {
     if (groudPro - bridPro <= this.position.y) {
       player.gamePlaying = false;
     }
-    if (this.position.x + bridPro >= x) {
+    console.info("lest",this.position.y + bridPro,pipeH);
+    if (this.position.x + (bridPro / 2) >= x) {
       if (this.position.x + bridPro < x + pipeW) {
         if (this.position.y - bridPro <= pipeH) {
-          console.info("he");
-          player.gamePlaying = false;
-          player.gamePlaying = true;
+          if ( this.position.y + bridPro >= (pipeH + 20)) {
+            player.gamePlaying = false;
+        }
         }
       }
     }
@@ -159,7 +155,7 @@ const pipe = {
   pipeGap: 85,
   move: true,
   drewPipe: function () {
-    for (let i = 0; i < this.pipe.length; i++) {
+    for (let i = 0; i    < this.pipe.length; i++) {
       let p = this.pipe[i];
       canvasTx.drawImage(this.topPipe.pipeImg, p.x, p.y);
       canvasTx.drawImage(
