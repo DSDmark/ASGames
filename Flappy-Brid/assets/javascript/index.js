@@ -41,7 +41,7 @@ const playingObject = {
     { playObjectImg: new Image() },
     { playObjectImg: new Image() },
   ],
-  drewPlayObject: function () {
+  drewPlayObject() {
     canvasTx.save();
     canvasTx.translate(this.position.x, this.position.y);
     canvasTx.rotate(this.rotatation * RAD);
@@ -52,7 +52,7 @@ const playingObject = {
     );
     canvasTx.restore();
   },
-  updateFrames: function () {
+  updateFrames() {
     if (player.gameActive) {
       this.frames += screenFrame % 10 == 0 ? 1 : 0; // * CONTROL FPS
       this.position.y += screenFrame % 8 == 0 ? Math.sin(screenFrame * RAD) : 0; // * TRANSLATE THE BRID
@@ -77,37 +77,40 @@ const playingObject = {
     }
     this.frames = this.frames % this.imgAnimation.length; // ? CONTROL BRID ANIMETION
   },
-  flying: function () {
+  flying() {
     // ? WHEN KEY PRESS THEN RUN
     if (this.position.y > 0) {
       this.speed = -this.thrust;
     }
   },
-  objectRotation: function () {
+  objectRotation() {
     if (this.speed <= 0) {
       this.rotatation = Math.max(-25, (-25 * this.speed) / (-1 * this.thrust));
     } else if (this.speed > 0) {
       this.rotatation = Math.min(90, (90 * this.speed) / (this.thrust * 2));
     }
   },
-  collisioned: function () {
+  collisioned() {
     if (!pipe.pipe.length) return;
     let x = pipe.pipe[0].x;
     let y = pipe.pipe[0].y;
-    let bridPro = parseFloat(this.imgAnimation[0].playObjectImg.width) / 2;
+    let bridPro =
+      parseFloat(this.imgAnimation[0].playObjectImg.width) / 4 +
+      parseFloat(this.imgAnimation[0].playObjectImg.width) / 4;
     let groudPro = parseFloat(canvas.height - ground.groundImg.height);
     let pipeH = y + parseFloat(pipe.topPipe.pipeImg.height);
     let pipeW = parseFloat(pipe.topPipe.pipeImg.width);
     if (groudPro - bridPro <= this.position.y) {
       player.gamePlaying = false;
     }
-    console.info("lest",this.position.y + bridPro,pipeH);
-    if (this.position.x + (bridPro / 2) >= x) {
+    console.log(this.position.y + bridPro, pipeH + pipe.pipeGap);
+    if (this.position.x + bridPro / 2 >= x) {
       if (this.position.x + bridPro < x + pipeW) {
-        if (this.position.y - bridPro <= pipeH) {
-          if ( this.position.y + bridPro >= (pipeH + 20)) {
-            player.gamePlaying = false;
-        }
+        if (
+          this.position.y - bridPro <= pipeH ||
+          this.position.y + bridPro >= pipeH + pipe.pipeGap
+        ) {
+          player.gamePlaying = false;
         }
       }
     }
@@ -117,7 +120,7 @@ const playingObject = {
 const background = {
   backgroundImg: new Image(),
   position: { x: 0, y: 0 },
-  drewBackground: function () {
+  drewBackground() {
     canvasTx.drawImage(
       this.backgroundImg,
       this.position.x,
@@ -132,14 +135,14 @@ const ground = {
   groundImg: new Image(),
   dx: 2,
   position: { x: 0, y: 0 },
-  drewGround: function () {
+  drewGround() {
     canvasTx.drawImage(
       this.groundImg,
       this.position.x,
       parseFloat(canvas.height - this.groundImg.height)
     );
   },
-  updateGround: function () {
+  updateGround() {
     if (player.gamePlaying) {
       this.position.x -= this.dx;
       this.position.x = this.position.x % (this.groundImg.width / 14);
@@ -154,8 +157,8 @@ const pipe = {
   pipe: [],
   pipeGap: 85,
   move: true,
-  drewPipe: function () {
-    for (let i = 0; i    < this.pipe.length; i++) {
+  drewPipe() {
+    for (let i = 0; i < this.pipe.length; i++) {
       let p = this.pipe[i];
       canvasTx.drawImage(this.topPipe.pipeImg, p.x, p.y);
       canvasTx.drawImage(
@@ -165,7 +168,7 @@ const pipe = {
       );
     }
   },
-  pipeUpdate: function () {
+  pipeUpdate() {
     if (player.gameActive) {
       if (screenFrame % 135 == 0) {
         // ? AUTOPLAYING
@@ -209,7 +212,7 @@ const UI = {
   game: [{ start: new Image() }, { over: new Image() }],
   tap: [{ tapImg: new Image() }, { tapImg: new Image() }],
   score: [{ current: 0, best: 0 }],
-  drewUI: function () {
+  drewUI() {
     if (player.gameActive) {
       canvasTx.fillStyle = "rgb(126 255 90 / 30%)";
       canvasTx.fillRect(0, 0, canvas.width, canvas.height);
@@ -240,7 +243,7 @@ const UI = {
     }
     this.drewScore();
   },
-  drewScore: function () {
+  drewScore() {
     canvasTx.fillStyle = "#2d8b26";
     canvasTx.font = "20px monospace";
     if (player.gamePlaying) {
@@ -267,7 +270,7 @@ const UI = {
       );
     }
   },
-  updateUI: function () {
+  updateUI() {
     if (player.gamePlaying) {
       // ? SETING SCORE
       this.score[0].best = Math.max(
