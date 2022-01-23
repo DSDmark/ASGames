@@ -21,8 +21,21 @@ const player = {
       if (player.gameActive) {
         player.gameActive = false;
         player.gamePlaying = true;
+        pipe.pipe = [];
       }
-      playingObject.flying();
+      if (player.gamePlaying) {
+        playingObject.flying();
+        SFX.bg.play();
+        SFX.start.play();
+      } else {
+        pipe.pipe = [];
+        SFX.bg.currentTime = 0;
+        playingObject.rotatation = 0;
+        playingObject.position.y = 50;
+        UI.score[0].current = 0;
+        player.gameActive = true;
+      }
+      return true;
     },
     true
   );
@@ -61,17 +74,17 @@ const playingObject = {
       this.position.y += this.speed;
       this.speed += this.gravity;
       this.objectRotation();
+      // pipe.pipe = [];
       this.collisioned();
     } else if (!player.gameActive && !player.gamePlaying) {
       this.frames = 1;
-      this.objectRotation();
       if (
         this.position.y +
           parseFloat(this.imgAnimation[0].playObjectImg.width / 2) <
         ground.position.y
       ) {
         this.position.y += this.speed;
-        this.setrotation();
+        this.objectRotation();
         this.speed += this.gravity * 2;
       }
     }
@@ -80,6 +93,7 @@ const playingObject = {
   flying() {
     // ? WHEN KEY PRESS THEN RUN
     if (this.position.y > 0) {
+      SFX.flap.play();
       this.speed = -this.thrust;
     }
   },
@@ -103,13 +117,14 @@ const playingObject = {
     if (groudPro - bridPro <= this.position.y) {
       player.gamePlaying = false;
     }
-    console.log(this.position.y + bridPro, pipeH + pipe.pipeGap);
     if (this.position.x + bridPro / 2 >= x) {
       if (this.position.x + bridPro < x + pipeW) {
         if (
           this.position.y - bridPro <= pipeH ||
           this.position.y + bridPro >= pipeH + pipe.pipeGap
         ) {
+          SFX.hit.play();
+          SFX.bg.pause();
           player.gamePlaying = false;
         }
       }
@@ -193,6 +208,7 @@ const pipe = {
       }
       if (this.move) {
         UI.score[0].current++;
+        SFX.score.play();
         this.move = false;
       }
       this.pipe.forEach((pipe) => {
@@ -240,6 +256,7 @@ const UI = {
         (canvas.width - this.tap[this.frames].tapImg.width) / 2,
         (canvas.height - this.tap[this.frames].tapImg.height) / 1.7
       );
+      SFX.bg.pause();
     }
     this.drewScore();
   },
@@ -268,6 +285,17 @@ const UI = {
         canvas.height / 20,
         canvas.height - 60
       );
+    } else {
+      canvasTx.fillText(
+        `Your Score:${this.score[0].current}`,
+        canvas.height / 20,
+        canvas.height - 60
+      );
+      canvasTx.strokeText(
+        `Your Score:${this.score[0].current}`,
+        canvas.height / 20,
+        canvas.height - 60
+      );
     }
   },
   updateUI() {
@@ -285,6 +313,15 @@ const UI = {
   },
 };
 
+// ─── AUDIOS SET ─────────────────────────────────────────────────────────────────
+const SFX = {
+  start: new Audio(),
+  flap: new Audio(),
+  score: new Audio(),
+  hit: new Audio(),
+  bg: new Audio(),
+  played: false,
+};
 // ────────────────────────────────────────────────────────────────────────────────
 const updateElements = () => {
   playingObject.updateFrames();
@@ -335,6 +372,16 @@ UI.game[0].start.src = "assets/images/start&over_game_img/getready.png";
 UI.game[1].over.src = "assets/images/start&over_game_img/gameOver.png";
 UI.tap[0].tapImg.src = "assets/images/start&over_game_img/1_tap.png";
 UI.tap[1].tapImg.src = "assets/images/start&over_game_img/2_tap.png";
+// TODO AUDIO SRC
+SFX.start.src = "assets/audio/Main_sounds/start.wav";
+SFX.flap.src = "assets/audio/Main_sounds/flap.wav";
+SFX.score.src = "assets/audio/Main_sounds/score.wav";
+SFX.hit.src = "assets/audio/Main_sounds/hit.wav";
+SFX.bg.src = "assets/audio/bg_songs/bg.mp3";
+
+// ? AUDIO PROPATIES
+SFX.start.volume = 0.2;
+SFX.flap.volume = 0.2;
+SFX.score.volume = 0.2;
+SFX.hit.volume = 0.2;
 // ────────────────────────────────────────────────────────────────────────────────
-// kab-se kabtak
-// paper are online or ofline
