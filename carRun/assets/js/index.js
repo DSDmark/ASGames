@@ -1,15 +1,6 @@
-//
-// ─── DEVELOPED BY DSMARK ────────────────────────────────────────────────────────
-//
 // ────────────────────────────────────────────────────────── I ──────────
 //   :::::: V A R I A B L E S : :  :   :    :     :        :          :
 // ────────────────────────────────────────────────────────────────────
-console.log(
-  "%cthis is messages by the Dsmark if you reach to 5th level then one special function run for you",
-  `background: linear-gradient(
-180deg,#cdac64,#c1c8d0);color:white;font-size:2rem;text-transform: capitalize; box-shadow:0 0 8rem 2rem rgba(150,100,0,0.5);
-  border-radius:0 1rem 0 1rem;`
-);
 const score = document.querySelector("#score");
 const level = document.querySelector("#level");
 const bgAudio = document.querySelector("#bgAudio");
@@ -66,7 +57,6 @@ function keyDown(e) {
   e.preventDefault;
   gameKeys[e.code] = true;
   // console.log(e.code);    // RETURN THE ALL VALUE AND METHOD. RELATED TO KEYS
-
 }
 
 function keyUp(e) {
@@ -103,7 +93,7 @@ function gameStart() {
     let roadLines = document.createElement("div");
     roadLines.setAttribute("class", "lines");
     roadLines.Y = i * 180;
-      roadLines.style.top = roadLines.Y + "px";
+    roadLines.style.top = roadLines.Y + "px";
     gameArea.appendChild(roadLines);
   }
 
@@ -205,12 +195,9 @@ function moveOtherCar(playerCar) {
 
   otherCars.forEach((value) => {
     if (collaging(playerCar, value)) {
-      
-      jump();
-
+      // gameOver();
     } else if (value.Y >= 900) {
       value.Y -= 900;
-
       //  FOR OTHER CAR REMDOW POSITIONS
       value.style.left = Math.floor(Math.random() * 99) + 1 + "%";
     }
@@ -230,9 +217,6 @@ function increaseSpeed(speed) {
     player.speedUp += 1;
     player.speedEndPoint += 1;
     player.level += 1;
-  }
-  if (Math.floor(bgAudio.duration) == Math.floor(bgAudio.currentTime)) {
-    bgAudio.src = `assets/audio/bg2.mp3`;
   }
   level.innerText = `Level: ${player.level}`;
   boardSpeed.innerText = `Speed: ${player.speed}`;
@@ -257,12 +241,3 @@ function gameOver() {
   endGameAudio.play();
   startScreen.classList.remove("hideClass");
 }
-
-// ─── PLAYER CAR JUMP ────────────────────────────────────────────────────────────
-function jump() {
-  if (gameKeys.Space) {
-      return;
-  }
-  else{return gameOver()}
-}
-  
