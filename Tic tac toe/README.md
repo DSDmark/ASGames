@@ -31,9 +31,9 @@ Once you are done playing you can close the tab in your browser to quit the game
 
 </div>
 
-### GoRun
+### Tic tac toc
 
-![GoRun perview](assets/images/perview.gif "AS੯ames Collection")
+![Tic tac toc perview](assets/images/perview.gif "AS੯ames Collection")
 
 </div>
 

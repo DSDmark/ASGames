@@ -31,9 +31,9 @@ Once you are done playing you can close the tab in your browser to quit the game
 
 </div>
 
-### GoRun
+### Flappy Brid Game
 
-![GoRun perview](assets/images/perview.gif "AS੯ames Collection")
+![flappy brid perview](assets/images/perview.gif "AS੯ames Collection")
 
 </div>
 
