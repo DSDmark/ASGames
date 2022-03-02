@@ -31,9 +31,9 @@ Once you are done playing you can close the tab in your browser to quit the game
 
 </div>
 
-### Flappy Brid Game
+### Ping Pong
 
-![flappy brid perview](assets/images/perview.gif "AS੯ames Collection")
+![Ping Pong perview](assets/images/perview.gif "AS੯ames Collection")
 
 </div>
 
