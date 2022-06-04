@@ -195,7 +195,7 @@ function moveOtherCar(playerCar) {
 
   otherCars.forEach((value) => {
     if (collaging(playerCar, value)) {
-      // gameOver();
+       gameOver();
     } else if (value.Y >= 900) {
       value.Y -= 900;
       //  FOR OTHER CAR REMDOW POSITIONS
